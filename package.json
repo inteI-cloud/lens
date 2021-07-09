@@ -283,7 +283,7 @@
     "@types/module-alias": "^2.0.0",
     "@types/node": "12.20",
     "@types/npm": "^2.0.31",
-    "@types/progress-bar-webpack-plugin": "^2.1.0",
+    "@types/progress-bar-webpack-plugin": "^2.1.2",
     "@types/proper-lockfile": "^4.1.1",
     "@types/randomcolor": "^0.5.5",
     "@types/react": "^17.0.0",
@@ -385,6 +385,6 @@
     "webpack-node-externals": "^1.7.2",
     "what-input": "^5.2.10",
     "xterm": "^4.12.0",
-    "xterm-addon-fit": "^0.4.0"
+    "xterm-addon-fit": "^0.5.0"
   }
 }
