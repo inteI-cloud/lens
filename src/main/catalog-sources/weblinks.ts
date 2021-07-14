@@ -19,43 +19,18 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { observable, reaction } from "mobx";
+import { computed, observable, reaction } from "mobx";
 import { WeblinkStore } from "../../common/weblink-store";
 import { WebLink } from "../../common/catalog-entities";
 import { catalogEntityRegistry } from "../catalog";
 import got from "got";
-import logger from "../logger";
-import { docsUrl, slackUrl } from "../../common/vars";
-
-const defaultLinks = [
-  { title: "Lens Website", url: "https://k8slens.dev" },
-  { title: "Lens Documentation", url: docsUrl },
-  { title: "Lens Community Slack", url: slackUrl },
-  { title: "Kubernetes Documentation", url: "https://kubernetes.io/docs/home/" },
-  { title: "Lens on Twitter", url: "https://twitter.com/k8slens" },
-  { title: "Lens Official Blog", url: "https://medium.com/k8slens" }
-].map((link) => (
-  new WebLink({
-    metadata: {
-      uid: link.url,
-      name: link.title,
-      source: "app",
-      labels: {}
-    },
-    spec: {
-      url: link.url
-    },
-    status: {
-      phase: "available",
-      active: true
-    }
-  })
-));
+import type { Disposer } from "../../common/utils";
 
 async function validateLink(link: WebLink) {
   try {
     const response = await got.get(link.spec.url, {
-      throwHttpErrors: false
+      throwHttpErrors: false,
+      timeout: 20_000,
     });
 
     if (response.statusCode >= 200 && response.statusCode < 500) {
@@ -63,7 +38,7 @@ async function validateLink(link: WebLink) {
     } else {
       link.status.phase = "unavailable";
     }
-  } catch(error) {
+  } catch {
     link.status.phase = "unavailable";
   }
 }
@@ -71,32 +46,48 @@ async function validateLink(link: WebLink) {
 
 export function syncWeblinks() {
   const weblinkStore = WeblinkStore.getInstance();
-  const weblinks = observable.array(defaultLinks);
+  const webLinkEntities = observable.map<string, [WebLink, Disposer]>();
+
+  function periodicallyCheckLink(link: WebLink): Disposer {
+    validateLink(link);
+
+    const timeout = setTimeout(() => validateLink(link), 10 * 60 * 1000); // every 10 minutes
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }
 
   reaction(() => weblinkStore.weblinks, (links) => {
-    weblinks.replace(links.map((data) => new WebLink({
-      metadata: {
-        uid: data.id,
-        name: data.name,
-        source: "local",
-        labels: {}
-      },
-      spec: {
-        url: data.url
-      },
-      status: {
-        phase: "available",
-        active: true
-      }
-    })));
-    weblinks.push(...defaultLinks);
+    const seenWeblinks = new Set<string>();
 
-    for (const link of weblinks) {
-      validateLink(link).catch((error) => {
-        logger.error(`failed to validate link ${link.spec.url}: %s`, error);
-      });
+    for (const weblinkData of links) {
+      seenWeblinks.add(weblinkData.id);
+
+      if (!webLinkEntities.has(weblinkData.id)) {
+        const link = new WebLink({
+          metadata: {
+            uid: weblinkData.id,
+            name: weblinkData.name,
+            source: "local",
+            labels: {}
+          },
+          spec: {
+            url: weblinkData.url
+          },
+          status: {
+            phase: "available",
+            active: true
+          }
+        });
+
+        webLinkEntities.set(weblinkData.id, [
+          link,
+          periodicallyCheckLink(link),
+        ]);
+      }
     }
   }, {fireImmediately: true});
 
-  catalogEntityRegistry.addObservableSource("weblinks", weblinks);
+  catalogEntityRegistry.addComputedSource("weblinks", computed(() => Array.from(webLinkEntities.values(), ([link]) => link)));
 }
