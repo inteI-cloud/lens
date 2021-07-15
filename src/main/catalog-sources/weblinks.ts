@@ -25,6 +25,7 @@ import { WebLink } from "../../common/catalog-entities";
 import { catalogEntityRegistry } from "../catalog";
 import got from "got";
 import type { Disposer } from "../../common/utils";
+import { random } from "lodash";
 
 async function validateLink(link: WebLink) {
   try {
@@ -51,10 +52,14 @@ export function syncWeblinks() {
   function periodicallyCheckLink(link: WebLink): Disposer {
     validateLink(link);
 
-    const timeout = setTimeout(() => validateLink(link), 10 * 60 * 1000); // every 10 minutes
+    let interval: NodeJS.Timeout;
+    const timeout = setTimeout(() => {
+      interval = setInterval(() => validateLink(link), 10 * 60 * 1000); // every 10 minutes
+    }, random(0, 60, false));
 
     return () => {
       clearTimeout(timeout);
+      clearInterval(interval);
     };
   }
 
