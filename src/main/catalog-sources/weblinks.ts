@@ -87,6 +87,14 @@ export function syncWeblinks() {
         ]);
       }
     }
+
+    // Stop checking and remove weblinks that are no longer in the store
+    for (const [weblinkId, [, disposer]] of webLinkEntities) {
+      if (!seenWeblinks.has(weblinkId)) {
+        disposer();
+        webLinkEntities.delete(weblinkId);
+      }
+    }
   }, {fireImmediately: true});
 
   catalogEntityRegistry.addComputedSource("weblinks", computed(() => Array.from(webLinkEntities.values(), ([link]) => link)));

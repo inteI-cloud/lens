@@ -26,7 +26,8 @@ import type { MigrationDeclaration } from "../helpers";
 export default {
   version: "5.1.1-beta.1",
   run(store) {
-    const weblinks: WeblinkData[] = store.get("weblinks");
+    const weblinksRaw: any = store.get("weblinks");
+    const weblinks = (Array.isArray(weblinksRaw) ? weblinksRaw : []) as WeblinkData[];
 
     weblinks.push(
       { id: "https://k8slens.dev", name: "Lens Website", url: "https://k8slens.dev" },
