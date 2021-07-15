@@ -252,16 +252,16 @@ export class Catalog extends React.Component<Props> {
           { title: "Labels", className: css.labelsCell, id: "labels" },
           { title: "Status", className: css.statusCell, sortBy: sortBy.status, id: "status" },
         ]}
-        customizeTableRowProps={item => ({
-          disabled: !item.enabled,
+        customizeTableRowProps={entity => ({
+          disabled: !entity.enabled,
         })}
-        renderTableContents={item => [
-          this.renderIcon(item),
-          item.name,
-          item.kind,
-          item.source,
-          item.getLabelBadges(),
-          { title: item.phase, className: cssNames(css[item.phase]) }
+        renderTableContents={entity => [
+          this.renderIcon(entity),
+          entity.name,
+          entity.kind,
+          entity.source,
+          entity.getLabelBadges(),
+          { title: entity.phase, className: cssNames(css[entity.phase]) }
         ]}
         detailsItem={this.catalogEntityStore.selectedItem}
         onDetails={this.onDetails}
