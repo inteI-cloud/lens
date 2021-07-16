@@ -19,18 +19,19 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/**
- * A function that does nothing
- */
+// Common utils (main OR renderer)
+
 export function noop<T extends any[]>(...args: T): void {
   return void args;
 }
 
+export * from  "./sort-compare";
 export * from "./app-version";
 export * from "./autobind";
 export * from "./base64";
 export * from "./camelCase";
 export * from "./cloneJson";
+export * from "./cluster-id-url-parsing";
 export * from "./debouncePromise";
 export * from "./defineGlobal";
 export * from "./delay";
@@ -40,17 +41,18 @@ export * from "./escapeRegExp";
 export * from "./extended-map";
 export * from "./getRandId";
 export * from "./hash-set";
+export * from "./local-kubeconfig";
 export * from "./n-fircate";
 export * from "./openExternal";
 export * from "./paths";
 export * from "./reject-promise";
 export * from "./singleton";
-export * from "./sort-compare";
 export * from "./splitArray";
 export * from "./tar";
 export * from "./toggle-set";
 export * from "./toJS";
 export * from "./type-narrowing";
+export * from "./types";
 
 import * as iter from "./iter";
 

@@ -279,7 +279,8 @@ export abstract class KubeObjectStore<T extends KubeObject = any> extends ItemSt
   }
 
   async update(item: T, data: Partial<T>): Promise<T> {
-    const newItem = await item.update<T>(data);
+    const rawItem = await item.update(data);
+    const newItem = new this.api.objectConstructor(rawItem);
 
     ensureObjectSelfLink(this.api, newItem);
 

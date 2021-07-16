@@ -32,11 +32,12 @@ import { PodDetailsTolerations } from "../+workloads-pods/pod-details-toleration
 import { PodDetailsAffinities } from "../+workloads-pods/pod-details-affinities";
 import { podsStore } from "../+workloads-pods/pods.store";
 import { jobStore } from "./job.store";
-import { getDetailsUrl, KubeObjectDetailsProps } from "../kube-object";
 import type { Job } from "../../api/endpoints";
 import { PodDetailsList } from "../+workloads-pods/pod-details-list";
-import { lookupApiLink } from "../../api/kube-api";
-import { KubeObjectMeta } from "../kube-object/kube-object-meta";
+import { KubeObjectMeta } from "../kube-object-meta";
+import { apiManager } from "../../api/api-manager";
+import { getDetailsUrl } from "../kube-details";
+import type { KubeObjectDetailsProps } from "../kube-object-details";
 
 interface Props extends KubeObjectDetailsProps<Job> {
 }
@@ -87,7 +88,7 @@ export class JobDetails extends React.Component<Props> {
           {
             ownerRefs.map(ref => {
               const { name, kind } = ref;
-              const detailsUrl = getDetailsUrl(lookupApiLink(ref, job));
+              const detailsUrl = getDetailsUrl(apiManager.lookupApiLink(ref, job));
 
               return (
                 <p key={name}>

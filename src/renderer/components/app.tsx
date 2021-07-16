@@ -31,8 +31,8 @@ import { Events } from "./+events/events";
 import { DeploymentScaleDialog } from "./+workloads-deployments/deployment-scale-dialog";
 import { CronJobTriggerDialog } from "./+workloads-cronjobs/cronjob-trigger-dialog";
 import { CustomResources } from "./+custom-resources/custom-resources";
-import { isAllowedResource } from "../../common/rbac";
-import { getHostedCluster, getHostedClusterId } from "../../common/cluster-store";
+import { getHostedClusterId } from "../../common/utils";
+import { ClusterStore } from "../../common/cluster-store";
 import logger from "../../main/logger";
 import { webFrame } from "electron";
 import { ClusterPageRegistry, getExtensionPageUrl } from "../../extensions/registries/page-registry";
@@ -56,7 +56,7 @@ import { TabLayout, TabLayoutRoute } from "./layout/tab-layout";
 import { ErrorBoundary } from "./error-boundary";
 import { MainLayout } from "./layout/main-layout";
 import { Notifications } from "./notifications";
-import { KubeObjectDetails } from "./kube-object";
+import { KubeObjectDetails } from "./kube-object-details";
 import { KubeConfigDialog } from "./kubeconfig-dialog";
 import { Terminal } from "./dock/terminal";
 import { namespaceStore } from "./+namespaces/namespace.store";
@@ -70,9 +70,13 @@ import { Workloads } from "./+workloads";
 import { Config } from "./+config";
 import { Storage } from "./+storage";
 import { catalogEntityRegistry } from "../api/catalog-entity-registry";
+import type { Cluster } from "../../main/cluster";
+import { isAllowedResource } from "../../common/utils/allowed-resource";
 
 @observer
 export class App extends React.Component {
+  static cluster: Cluster;
+
   constructor(props: {}) {
     super(props);
     makeObservable(this);
@@ -85,9 +89,11 @@ export class App extends React.Component {
 
     logger.info(`[APP]: Init dashboard, clusterId=${clusterId}, frameId=${frameId}`);
     await Terminal.preloadFonts();
-
     await requestMain(clusterSetFrameIdHandler, clusterId);
-    await getHostedCluster().whenReady; // cluster.activate() is done at this point
+
+    App.cluster = ClusterStore.getInstance().getById(clusterId);
+
+    await App.cluster.whenReady; // cluster.activate() is done at this point
 
     const activeEntityDisposer = reaction(() => catalogEntityRegistry.getById(clusterId), (entity) => {
       if (!entity) {
@@ -212,7 +218,7 @@ export class App extends React.Component {
           <StatefulSetScaleDialog/>
           <ReplicaSetScaleDialog/>
           <CronJobTriggerDialog/>
-          <CommandContainer clusterId={getHostedCluster()?.id}/>
+          <CommandContainer clusterId={App.cluster.id}/>
         </ErrorBoundary>
       </Router>
     );

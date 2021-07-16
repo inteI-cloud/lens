@@ -26,7 +26,7 @@ import React from "react";
 
 import { Dialog, DialogProps } from "../../dialog";
 import { Input } from "../../input";
-import { showDetails } from "../../kube-object";
+import { showDetails } from "../../kube-details";
 import { SubTitle } from "../../layout/sub-title";
 import { Notifications } from "../../notifications";
 import { Wizard, WizardStep } from "../../wizard";
@@ -80,8 +80,8 @@ export class AddClusterRoleDialog extends React.Component<Props> {
         isOpen={AddClusterRoleDialog.isOpen.get()}
         close={AddClusterRoleDialog.close}
       >
-        <Wizard 
-          header={<h5>Create ClusterRole</h5>} 
+        <Wizard
+          header={<h5>Create ClusterRole</h5>}
           done={AddClusterRoleDialog.close}
         >
           <WizardStep

@@ -24,63 +24,16 @@ import "./kube-object-details.scss";
 import React from "react";
 import { disposeOnUnmount, observer } from "mobx-react";
 import { computed, observable, reaction, makeObservable } from "mobx";
-import { createPageParam, navigation } from "../../navigation";
 import { Drawer } from "../drawer";
 import type { KubeObject } from "../../api/kube-object";
 import { Spinner } from "../spinner";
 import { apiManager } from "../../api/api-manager";
 import { crdStore } from "../+custom-resources/crd.store";
 import { CrdResourceDetails } from "../+custom-resources";
-import { KubeObjectMenu } from "./kube-object-menu";
+import { KubeObjectMenu } from "../kube-object-menu/kube-object-menu";
 import type { CustomResourceDefinition } from "../../api/endpoints";
 import { KubeObjectDetailRegistry } from "../../api/kube-object-detail-registry";
-import logger from "../../../main/logger";
-
-/**
- * Used to store `object.selfLink` to show more info about resource in the details panel.
- */
-export const kubeDetailsUrlParam = createPageParam({
-  name: "kube-details",
-});
-
-/**
- * Used to highlight last active/selected table row with the resource.
- *
- * @example
- * If we go to "Nodes (page) -> Node (details) -> Pod (details)",
- * last clicked Node should be "active" while Pod details are shown).
- */
-export const kubeSelectedUrlParam = createPageParam({
-  name: "kube-selected",
-  get defaultValue() {
-    return kubeDetailsUrlParam.get();
-  }
-});
-
-export function showDetails(selfLink = "", resetSelected = true) {
-  const detailsUrl = getDetailsUrl(selfLink, resetSelected);
-
-  navigation.merge({ search: detailsUrl });
-}
-
-export function hideDetails() {
-  showDetails();
-}
-
-export function getDetailsUrl(selfLink: string, resetSelected = false, mergeGlobals = true) {
-  logger.debug("getDetailsUrl", { selfLink, resetSelected, mergeGlobals });
-  const params = new URLSearchParams(mergeGlobals ? navigation.searchParams : "");
-
-  params.set(kubeDetailsUrlParam.name, selfLink);
-
-  if (resetSelected) {
-    params.delete(kubeSelectedUrlParam.name);
-  } else {
-    params.set(kubeSelectedUrlParam.name, kubeSelectedUrlParam.get());
-  }
-
-  return `?${params}`;
-}
+import { kubeDetailsUrlParam, hideDetails } from "../kube-details";
 
 export interface KubeObjectDetailsProps<T = KubeObject> {
   className?: string;
@@ -102,12 +55,10 @@ export class KubeObjectDetails extends React.Component {
   }
 
   @computed get object() {
-    try {
-      return apiManager
-        .getStore(this.path)
-        ?.getByPath(this.path);
-    } catch (error) {
-      logger.error(`[KUBE-OBJECT-DETAILS]: failed to get store or object: ${error}`, { path: this.path });
+    const store = apiManager.getStore(this.path);
+
+    if (store) {
+      return store.getByPath(this.path);
     }
   }
 
