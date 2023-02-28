@@ -10157,6 +10157,11 @@ mobx@^6.3.0:
   resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.3.0.tgz#a8fb693c3047bdfcb1eaff9aa48e36a7eb084f96"
   integrity sha512-Aa1+VXsg4WxqJMTQfWoYuJi5UD10VZhiobSmcs5kcmI3BIT0aVtn7DysvCeDADCzl7dnbX+0BTHUj/v7gLlZpQ==
 
+mobx@^6.7.0:
+  version "6.8.0"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.8.0.tgz#59051755fdb5c8a9f3f2e0a9b6abaf86bab7f843"
+  integrity sha512-+o/DrHa4zykFMSKfS8Z+CPSEg5LW9tSNGTuN8o6MF1GKxlfkSHSeJn5UtgxvPkGgaouplnrLXCF+duAsmm6FHQ==
+
 mock-fs@^4.14.0:
   version "4.14.0"
   resolved "https://registry.yarnpkg.com/mock-fs/-/mock-fs-4.14.0.tgz#ce5124d2c601421255985e6e94da80a7357b1b18"
