@@ -182,7 +182,7 @@
   "dependencies": {
     "@hapi/call": "^8.0.1",
     "@hapi/subtext": "^7.0.3",
-    "@kubernetes/client-node": "^0.14.3",
+    "@kubernetes/client-node": "^0.18.1",
     "@sentry/electron": "^2.5.0",
     "@sentry/integrations": "^6.8.0",
     "abort-controller": "^3.0.0",
@@ -207,7 +207,7 @@
     "immer": "^8.0.1",
     "joi": "^17.4.0",
     "js-yaml": "^3.14.0",
-    "jsdom": "^16.4.0",
+    "jsdom": "^17.0.0",
     "jsonpath": "^1.0.2",
     "lodash": "^4.17.15",
     "mac-ca": "^1.0.4",
@@ -244,7 +244,7 @@
     "win-ca": "^3.2.0",
     "winston": "^3.2.1",
     "winston-transport-browserconsole": "^1.0.5",
-    "ws": "^7.4.6"
+    "ws": "^8.17.1"
   },
   "devDependencies": {
     "@emeraldpay/hashicon-react": "^0.4.0",
