@@ -183,7 +183,7 @@
     "@hapi/call": "^8.0.1",
     "@hapi/subtext": "^7.0.3",
     "@kubernetes/client-node": "^0.14.3",
-    "@sentry/electron": "^2.5.0",
+    "@sentry/electron": "^4.15.0",
     "@sentry/integrations": "^6.8.0",
     "abort-controller": "^3.0.0",
     "array-move": "^3.0.1",
